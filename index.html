@@ -1512,22 +1512,22 @@
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluanZwYmFoZnFsdG96cnNxY21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MDM0MzIsImV4cCI6MjEwMzQ3OTQzMn0.JoGibO2fqrw7sbmBbQ55EUKONQl94cqPTmkqxNoiXXk';
 
             const CLASS_DEFINITIONS = [
-    { id: 'Form1_Red', grade: 'Form1', stream: 'Red', display: 'Form 1 Red' },
-    { id: 'Form1_Blue', grade: 'Form1', stream: 'Blue', display: 'Form 1 Blue' },
-    { id: 'Form1_Green', grade: 'Form1', stream: 'Green', display: 'Form 1 Green' },
-    { id: 'Form2_Red', grade: 'Form2', stream: 'Red', display: 'Form 2 Red' },
-    { id: 'Form2_Blue', grade: 'Form2', stream: 'Blue', display: 'Form 2 Blue' },
-    { id: 'Form2_Green', grade: 'Form2', stream: 'Green', display: 'Form 2 Green' },
-    { id: 'Grade10_Red', grade: 'Grade10', stream: 'Red', display: 'Grade 10 Red' },
-    { id: 'Grade10_Blue', grade: 'Grade10', stream: 'Blue', display: 'Grade 10 Blue' },
-    { id: 'Grade10_Green', grade: 'Grade10', stream: 'Green', display: 'Grade 10 Green' },
-    { id: 'Grade11_Red', grade: 'Grade11', stream: 'Red', display: 'Grade 11 Red' },
-    { id: 'Grade11_Blue', grade: 'Grade11', stream: 'Blue', display: 'Grade 11 Blue' },
-    { id: 'Grade11_Green', grade: 'Grade11', stream: 'Green', display: 'Grade 11 Green' },
-    { id: 'Grade12_Red', grade: 'Grade12', stream: 'Red', display: 'Grade 12 Red' },
-    { id: 'Grade12_Blue', grade: 'Grade12', stream: 'Blue', display: 'Grade 12 Blue' },
-    { id: 'Grade12_Green', grade: 'Grade12', stream: 'Green', display: 'Grade 12 Green' }
-];
+                { id: 'Form1_Red', grade: 'Form1', stream: 'Red', display: 'Form 1 Red' },
+                { id: 'Form1_Blue', grade: 'Form1', stream: 'Blue', display: 'Form 1 Blue' },
+                { id: 'Form1_Green', grade: 'Form1', stream: 'Green', display: 'Form 1 Green' },
+                { id: 'Form2_Red', grade: 'Form2', stream: 'Red', display: 'Form 2 Red' },
+                { id: 'Form2_Blue', grade: 'Form2', stream: 'Blue', display: 'Form 2 Blue' },
+                { id: 'Form2_Green', grade: 'Form2', stream: 'Green', display: 'Form 2 Green' },
+                { id: 'Grade10_Red', grade: 'Grade10', stream: 'Red', display: 'Grade 10 Red' },
+                { id: 'Grade10_Blue', grade: 'Grade10', stream: 'Blue', display: 'Grade 10 Blue' },
+                { id: 'Grade10_Green', grade: 'Grade10', stream: 'Green', display: 'Grade 10 Green' },
+                { id: 'Grade11_Red', grade: 'Grade11', stream: 'Red', display: 'Grade 11 Red' },
+                { id: 'Grade11_Blue', grade: 'Grade11', stream: 'Blue', display: 'Grade 11 Blue' },
+                { id: 'Grade11_Green', grade: 'Grade11', stream: 'Green', display: 'Grade 11 Green' },
+                { id: 'Grade12_Red', grade: 'Grade12', stream: 'Red', display: 'Grade 12 Red' },
+                { id: 'Grade12_Blue', grade: 'Grade12', stream: 'Blue', display: 'Grade 12 Blue' },
+                { id: 'Grade12_Green', grade: 'Grade12', stream: 'Green', display: 'Grade 12 Green' }
+            ];
 
             const SUBJECTS = [
                 'English', 'Mathematics', 'Biology', 'Chemistry', 'Physics',
@@ -1833,7 +1833,19 @@
             window.teacherLogin = teacherLogin;
 
             // ============================================================
-            // SECURE ADMIN LOGIN - Verifies against Supabase
+            // SHA-256 HASH FUNCTION
+            // ============================================================
+            async function hashPassword(password) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(password);
+                const hash = await crypto.subtle.digest('SHA-256', data);
+                return Array.from(new Uint8Array(hash))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+            }
+
+            // ============================================================
+            // SECURE ADMIN LOGIN - Verifies against Supabase with hashing
             // ============================================================
             async function adminLogin() {
                 const pass = document.getElementById('adminLoginPassword').value.trim();
@@ -1849,10 +1861,10 @@
                 }
                 
                 try {
-                    // Query the admin table for the stored password
+                    // Query the admin table for the stored password hash
                     const { data, error } = await supabaseClient
                         .from('admin')
-                        .select('password')
+                        .select('password_hash')
                         .maybeSingle();
                         
                     if (error) {
@@ -1862,12 +1874,14 @@
                     }
                     
                     if (!data) {
-                        showToast('❌ Admin account not configured. Please contact the system administrator.', true);
+                        showToast('❌ Admin account not configured. Please contact system administrator.', true);
                         return;
                     }
                     
-                    // Verify the entered password against the stored password
-                    if (data.password !== pass) {
+                    // Hash the entered password and compare
+                    const hashedInput = await hashPassword(pass);
+                    
+                    if (data.password_hash !== hashedInput) {
                         showToast('❌ Invalid admin password', true);
                         return;
                     }
