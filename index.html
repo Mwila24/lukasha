@@ -1177,7 +1177,6 @@
                 padding: 2px 10px !important;
             }
         }
-        /* Admin page - school selector tabs hidden */
         .admin-school-tabs {
             display: none !important;
         }
@@ -1185,7 +1184,6 @@
             display: none !important;
         }
 
-        /* Clean login forms - remove old role buttons */
         .login-options {
             display: none !important;
         }
@@ -1233,18 +1231,15 @@
 <body>
     <div class="mary-bg"></div>
 
-    <!-- connection status -->
     <div class="connection-status" id="connectionStatus">
         <span class="dot connecting" id="statusDot"></span>
         <span id="statusText">Connecting...</span>
     </div>
 
-    <!-- floating login -->
     <button class="login-floating-btn" id="loginFloatingBtn" title="Sign In">
         <i class="fas fa-user-circle"></i>
     </button>
 
-    <!-- top bar -->
     <div class="topbar">
         <div class="brand">
             <div class="school-logo">
@@ -1256,7 +1251,6 @@
         </div>
     </div>
 
-    <!-- login modal -->
     <div class="login-modal" id="loginModal">
         <div class="modal-content">
             <button class="close-btn" id="closeLoginModal">&times;</button>
@@ -1270,7 +1264,6 @@
                 <button class="btn btn-danger btn-block" id="logoutFromModalBtn"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
             </div>
             <div id="loginOptions">
-                <!-- Student Login -->
                 <div class="login-form" id="studentLoginForm">
                     <div class="field">
                         <label><i class="fas fa-id-card"></i> Student Number</label>
@@ -1281,7 +1274,6 @@
                     </button>
                 </div>
 
-                <!-- Teacher Login -->
                 <div class="login-form" id="teacherLoginForm">
                     <div class="field">
                         <label><i class="fas fa-user"></i> Username</label>
@@ -1296,7 +1288,6 @@
                     </button>
                 </div>
 
-                <!-- Admin Login -->
                 <div class="login-form" id="adminLoginForm">
                     <div class="field">
                         <label><i class="fas fa-lock"></i> Admin Password</label>
@@ -1306,7 +1297,6 @@
                         <i class="fas fa-sign-in-alt"></i> Sign In
                     </button>
                 </div>
-                <!-- Role selector buttons (clean, clickable) -->
                 <div class="role-selector">
                     <button class="btn btn-outline btn-sm" onclick="showLoginForm('student')">
                         <i class="fas fa-user-graduate"></i> Student
@@ -1322,7 +1312,6 @@
         </div>
     </div>
 
-    <!-- main shell -->
     <div class="shell" id="app">
         <div class="tab-nav" id="tabNav">
             <button class="tab-btn active" data-tab="student"><i class="fas fa-user-graduate"></i> Student</button>
@@ -1331,7 +1320,6 @@
             <button class="tab-btn hidden-tab" data-tab="classes"><i class="fas fa-users"></i> Classes</button>
         </div>
 
-        <!-- student section -->
         <div class="section active" id="studentSection">
             <div class="card"><div class="card-header"><h2><i class="fas fa-search"></i> Check Your Results</h2><span class="subtitle">Enter your student number to view combined Mid Term & End Term results</span></div>
                 <div class="grid-2"><div class="field"><label><i class="fas fa-id-card"></i> Student Number</label><input type="text" id="studentNumber" placeholder="e.g. 2024-001" value="2024-001"></div><div class="field"><label><i class="fas fa-calendar-alt"></i> Term</label><select id="studentTerm"><option value="">Select</option><option value="1">Term 1</option><option value="2">Term 2</option><option value="3">Term 3</option></select></div></div>
@@ -1340,7 +1328,6 @@
             <div id="studentResults" style="display:none;"><div class="card"><div class="card-header"><h2><i class="fas fa-user-graduate"></i> Student Information</h2></div><div id="studentInfo"></div></div><div class="card"><div class="card-header"><h2><i class="fas fa-list"></i> Combined Report (Mid Term & End Term)</h2><button class="btn btn-sm btn-success no-print" id="downloadResultsBtn"><i class="fas fa-file-pdf"></i> Download PDF</button></div><div id="resultsContent"></div></div></div>
         </div>
 
-        <!-- teacher section -->
         <div class="section" id="teacherSection">
             <div class="card" id="teacherLocked"><div class="card-header"><h2><i class="fas fa-lock"></i> Teacher Access Required</h2><span class="subtitle">Login as teacher</span></div><div style="text-align:center;padding:40px 20px;"><i class="fas fa-chalkboard-teacher" style="font-size:48px;color:var(--gold);margin-bottom:16px;display:block;"></i><p style="color:var(--ink-soft);margin-bottom:16px;">Restricted to registered teachers.</p><button class="btn btn-primary" onclick="openLoginModal('teacher')"><i class="fas fa-sign-in-alt"></i> Login as Teacher</button></div></div>
             <div id="teacherContent" style="display:none;">
@@ -1380,21 +1367,17 @@
             </div>
         </div>
 
-        <!-- admin section -->
         <div class="section" id="adminSection">
             <div class="card" id="adminLocked"><div class="card-header"><h2><i class="fas fa-lock"></i> Admin Access Required</h2><span class="subtitle">Login as admin</span></div><div style="text-align:center;padding:40px 20px;"><i class="fas fa-user-shield" style="font-size:48px;color:var(--gold);margin-bottom:16px;display:block;"></i><p style="color:var(--ink-soft);margin-bottom:16px;">Administrators only.</p><button class="btn btn-primary" onclick="openLoginModal('admin')"><i class="fas fa-sign-in-alt"></i> Login as Admin</button></div></div>
             <div id="adminContent" style="display:none;">
-                <!-- Admin dashboard stats -->
                 <div class="card"><div class="card-header"><h2><i class="fas fa-user-shield"></i> Admin Dashboard</h2><span class="subtitle">Overview</span></div><div class="grid-4"><div class="stat-card"><div class="icon"><i class="fas fa-users"></i></div><div class="number" id="totalStudents">0</div><div class="label">Total Students</div></div><div class="stat-card"><div class="icon"><i class="fas fa-user-tie"></i></div><div class="number" id="totalTeachers">0</div><div class="label">Total Teachers</div></div><div class="stat-card"><div class="icon"><i class="fas fa-book"></i></div><div class="number" id="totalSubjects">0</div><div class="label">Total Subjects</div></div><div class="stat-card"><div class="icon"><i class="fas fa-file-alt"></i></div><div class="number" id="totalResults">0</div><div class="label">Total Results</div></div></div></div>
 
-                <!-- Admin Tabs (Assignments & Learners Work) - NO SCHOOL SELECTOR TABS -->
                 <div class="card">
                     <div class="admin-tabs" id="adminTabs2">
                         <button class="admin-tab active" data-admintab="assignments2"><i class="fas fa-tasks"></i> Assignments</button>
                         <button class="admin-tab" data-admintab="learners2"><i class="fas fa-users"></i> Learners Work</button>
                     </div>
 
-                    <!-- Assignments Tab Content -->
                     <div id="assignmentsTab2" class="admin-tab-content active">
                         <div class="card-header">
                             <h2><i class="fas fa-tasks"></i> Teacher Assignments</h2>
@@ -1444,7 +1427,6 @@
                         </div>
                     </div>
 
-                    <!-- Learners Work Tab Content -->
                     <div id="learnersTab2" class="admin-tab-content">
                         <div class="card-header">
                             <h2><i class="fas fa-users"></i> Learners Work</h2>
@@ -1505,9 +1487,6 @@
         (function() {
             "use strict";
 
-            // ============================================================
-            // CONFIG
-            // ============================================================
             const SUPABASE_URL = 'https://injvpbahfqltozrsqcmc.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluanZwYmFoZnFsdG96cnNxY21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MDM0MzIsImV4cCI6MjEwMzQ3OTQzMn0.JoGibO2fqrw7sbmBbQ55EUKONQl94cqPTmkqxNoiXXk';
 
@@ -1543,9 +1522,6 @@
             let teacherImportData = null;
             let currentSchoolCode = 'LGSS';
 
-            // ============================================================
-            // DOM refs
-            // ============================================================
             const toastDiv = document.getElementById('globalToast');
             const toastMsg = document.getElementById('toastMsg');
             const statusDot = document.getElementById('statusDot');
@@ -1629,9 +1605,6 @@
             const bulkRegisterTemplateBtn = document.getElementById('bulkRegisterTemplateBtn');
             const bulkRegisterBtn = document.getElementById('bulkRegisterBtn');
 
-            // ============================================================
-            // SCHOOL CONFIGURATION
-            // ============================================================
             const SCHOOL_CONFIG = {
                 schools: {
                     'LGSS': {
@@ -1680,9 +1653,6 @@
                 document.title = school.name;
             }
 
-            // ============================================================
-            // ADMIN TAB SWITCHING
-            // ============================================================
             function setupAdminTabs() {
                 const tabSet = {
                     tabs: document.querySelectorAll('#adminTabs2 .admin-tab'),
@@ -1704,9 +1674,6 @@
                 });
             }
 
-            // ============================================================
-            // TOAST, LOGIN, CONNECTION
-            // ============================================================
             function showToast(msg, isError = false) {
                 toastMsg.textContent = msg;
                 toastDiv.classList.toggle('error', isError);
@@ -1785,81 +1752,99 @@
             }
             window.studentLogin = studentLogin;
 
-           function teacherLogin() {
-    const username = document.getElementById('teacherLoginUsername').value.trim();
-    const password = document.getElementById('teacherLoginPassword').value.trim();
+            // ============================================================
+            // UPDATED TEACHER LOGIN WITH DEBUGGING
+            // ============================================================
+            function teacherLogin() {
+                const username = document.getElementById('teacherLoginUsername').value.trim();
+                const password = document.getElementById('teacherLoginPassword').value.trim();
 
-    if (!username) { 
-        showToast('⚠️ Please enter your username', true); 
-        return; 
-    }
-    if (!password) { 
-        showToast('⚠️ Please enter your password', true); 
-        return; 
-    }
+                if (!username) { 
+                    showToast('⚠️ Please enter your username', true); 
+                    return; 
+                }
+                if (!password) { 
+                    showToast('⚠️ Please enter your password', true); 
+                    return; 
+                }
 
-    if (!supabaseClient || !isConnected) {
-        showToast('⚠️ Database not connected', true);
-        return;
-    }
+                if (!supabaseClient || !isConnected) {
+                    showToast('⚠️ Database not connected', true);
+                    return;
+                }
 
-    // Show loading state
-    const loginBtn = document.querySelector('#teacherLoginForm .btn-submit');
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+                console.log('🔍 Searching for teacher with username:', username);
 
-    supabaseClient
-        .from('teachers')
-        .select('*')
-        .eq('username', username)
-        .maybeSingle()
-        .then(({ data, error }) => {
-            // Reset button
-            loginBtn.disabled = false;
-            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                const loginBtn = document.querySelector('#teacherLoginForm .btn-submit');
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
 
-            if (error) {
-                console.error('Database error:', error);
-                showToast('❌ Database error: ' + error.message, true);
-                return;
+                supabaseClient
+                    .from('teachers')
+                    .select('*')
+                    .eq('username', username)
+                    .then(({ data, error }) => {
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+
+                        console.log('📊 Query result - Data:', data);
+                        console.log('📊 Query result - Error:', error);
+                        console.log('📊 Number of records found:', data ? data.length : 0);
+
+                        if (error) {
+                            console.error('❌ Database error:', error);
+                            showToast('❌ Database error: ' + error.message, true);
+                            return;
+                        }
+                        
+                        if (!data || data.length === 0) {
+                            // Try to show all teachers to help debug
+                            supabaseClient
+                                .from('teachers')
+                                .select('username')
+                                .then(({ data: allTeachers }) => {
+                                    console.log('📋 All teachers in database:', allTeachers);
+                                    const teacherList = allTeachers && allTeachers.length > 0 
+                                        ? allTeachers.map(t => t.username).join(', ') 
+                                        : 'none found';
+                                    showToast('❌ Teacher not found. Available teachers: ' + teacherList, true);
+                                })
+                                .catch(err => {
+                                    showToast('❌ Teacher not found. Please contact administrator.', true);
+                                });
+                            return;
+                        }
+                        
+                        const teacher = data[0];
+                        console.log('✅ Teacher found:', teacher.name);
+                        console.log('🔑 Entered password:', password);
+                        console.log('🔑 Stored password:', teacher.password);
+                        
+                        if (teacher.password !== password) {
+                            showToast('❌ Invalid password. Please try again.', true);
+                            return;
+                        }
+
+                        currentUser = { role: 'teacher', id: teacher.id, name: teacher.name };
+                        showToast('✅ Logged in as teacher: ' + teacher.name);
+                        loginModal.classList.remove('active');
+                        updateLoginUI();
+                        teacherLocked.style.display = 'none';
+                        teacherContent.style.display = 'block';
+                        document.querySelector('.tab-btn[data-tab="teacher"]').click();
+                        teacherNameDisplay.textContent = 'Welcome, ' + teacher.name;
+                    })
+                    .catch(err => {
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                        showToast('❌ Error: ' + err.message, true);
+                        console.error('❌ Login error:', err);
+                    });
             }
-            
-            if (!data) {
-                showToast('❌ Teacher not found. Please check your username or contact administrator.', true);
-                return;
-            }
-            
-            // Debug - log what we found
-            console.log('Teacher found:', data.name);
-            console.log('Entered password:', password);
-            console.log('Stored password:', data.password);
-            
-            if (data.password !== password) {
-                showToast('❌ Invalid password. Please try again.', true);
-                return;
-            }
-
-            // Login successful
-            currentUser = { role: 'teacher', id: data.id, name: data.name };
-            showToast('✅ Logged in as teacher: ' + data.name);
-            loginModal.classList.remove('active');
-            updateLoginUI();
-            teacherLocked.style.display = 'none';
-            teacherContent.style.display = 'block';
-            document.querySelector('.tab-btn[data-tab="teacher"]').click();
-            teacherNameDisplay.textContent = 'Welcome, ' + data.name;
-        })
-        .catch(err => {
-            loginBtn.disabled = false;
-            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-            showToast('❌ Error: ' + err.message, true);
-            console.error('Login error:', err);
-        });
-}
-window.teacherLogin = teacherLogin;
+            window.teacherLogin = teacherLogin;
 
             // ============================================================
-            // SHA-256 HASH FUNCTION
+            // ADMIN LOGIN
             // ============================================================
             async function hashPassword(password) {
                 const encoder = new TextEncoder();
@@ -1870,65 +1855,69 @@ window.teacherLogin = teacherLogin;
                     .join('');
             }
 
-            // ============================================================
-            // SECURE ADMIN LOGIN - Verifies against Supabase with hashing
-            // ============================================================
-         async function adminLogin() {
-    const pass = document.getElementById('adminLoginPassword').value.trim();
-    
-    if (!pass) {
-        showToast('Please enter admin password', true);
-        return;
-    }
-    
-    if (!supabaseClient || !isConnected) {
-        showToast('Database not connected', true);
-        return;
-    }
-    
-    try {
-        const { data, error } = await supabaseClient
-            .from('admin')
-            .select('password')
-            .limit(1)
-            .maybeSingle();
-            
-        if (error) {
-            showToast('Database error: ' + error.message, true);
-            console.error('Admin lookup error:', error);
-            return;
-        }
-        
-        if (!data) {
-            showToast('Admin account not configured. Please contact system administrator.', true);
-            return;
-        }
-        
-        if (data.password !== pass) {
-            showToast('Invalid admin password', true);
-            return;
-        }
-        
-        currentUser = { role: 'admin' };
-        showToast('Logged in as Admin');
-        loginModal.classList.remove('active');
-        updateLoginUI();
-        adminLocked.style.display = 'none';
-        adminContent.style.display = 'block';
-        document.querySelector('.tab-btn[data-tab="admin"]').click();
-        loadAdminStats();
-        loadClasses();
-        populateBulkClassDropdown();
-        populateAdminDropdowns();
-        loadAssignments();
-        loadStudents();
-        
-    } catch (err) {
-        showToast('Error: ' + err.message, true);
-        console.error('Admin login error:', err);
-    }
-}
-window.adminLogin = adminLogin;
+            async function adminLogin() {
+                const pass = document.getElementById('adminLoginPassword').value.trim();
+                
+                if (!pass) {
+                    showToast('⚠️ Please enter admin password', true);
+                    return;
+                }
+                
+                if (!supabaseClient || !isConnected) {
+                    showToast('⚠️ Database not connected', true);
+                    return;
+                }
+                
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('admin')
+                        .select('password_hash')
+                        .limit(1)
+                        .maybeSingle();
+                        
+                    if (error) {
+                        showToast('❌ Database error: ' + error.message, true);
+                        console.error('Admin lookup error:', error);
+                        return;
+                    }
+                    
+                    if (!data) {
+                        showToast('❌ Admin account not configured. Please contact system administrator.', true);
+                        return;
+                    }
+                    
+                    if (!data.password_hash) {
+                        showToast('❌ Admin password not set. Please contact system administrator.', true);
+                        return;
+                    }
+                    
+                    const hashedInput = await hashPassword(pass);
+                    
+                    if (data.password_hash !== hashedInput) {
+                        showToast('❌ Invalid admin password', true);
+                        return;
+                    }
+                    
+                    currentUser = { role: 'admin' };
+                    showToast('✅ Logged in as Admin');
+                    loginModal.classList.remove('active');
+                    updateLoginUI();
+                    adminLocked.style.display = 'none';
+                    adminContent.style.display = 'block';
+                    document.querySelector('.tab-btn[data-tab="admin"]').click();
+                    loadAdminStats();
+                    loadClasses();
+                    populateBulkClassDropdown();
+                    populateAdminDropdowns();
+                    loadAssignments();
+                    loadStudents();
+                    
+                } catch (err) {
+                    showToast('❌ Error: ' + err.message, true);
+                    console.error('Admin login error:', err);
+                }
+            }
+            window.adminLogin = adminLogin;
 
             // ============================================================
             // SUPABASE INIT
@@ -2073,9 +2062,6 @@ window.adminLogin = adminLogin;
                 });
             }
 
-            // ============================================================
-            // ADMIN STATS & CLASSES
-            // ============================================================
             async function loadAdminStats() {
                 if (!supabaseClient || !isConnected) {
                     totalStudents.textContent = '?';
@@ -2149,9 +2135,6 @@ window.adminLogin = adminLogin;
                 }
             };
 
-            // ============================================================
-            // LOAD ASSIGNMENTS
-            // ============================================================
             async function loadAssignments() {
                 if (!supabaseClient || !isConnected) {
                     [assignmentsTableBody2].forEach(body => {
@@ -2231,9 +2214,6 @@ window.adminLogin = adminLogin;
                 }
             };
 
-            // ============================================================
-            // ASSIGN TEACHER
-            // ============================================================
             assignTeacherBtn2.addEventListener('click', async function() {
                 if (!currentUser || currentUser.role !== 'admin') {
                     showToast('🔒 Admin login required', true);
@@ -2286,9 +2266,6 @@ window.adminLogin = adminLogin;
                 }
             });
 
-            // ============================================================
-            // LOAD STUDENTS FOR ADMIN
-            // ============================================================
             async function loadStudents() {
                 if (!supabaseClient || !isConnected) {
                     [studentsTableBody2].forEach(body => {
@@ -2362,9 +2339,6 @@ window.adminLogin = adminLogin;
                 }
             };
 
-            // ============================================================
-            // ADD STUDENT (Admin)
-            // ============================================================
             addStudentBtn2.addEventListener('click', async function() {
                 if (!currentUser || currentUser.role !== 'admin') {
                     showToast('🔒 Admin login required', true);
@@ -2402,9 +2376,6 @@ window.adminLogin = adminLogin;
                 }
             });
 
-            // ============================================================
-            // ADD TEACHER
-            // ============================================================
             addTeacherBtn.addEventListener('click', async function() {
                 if (!currentUser || currentUser.role !== 'admin') {
                     showToast('🔒 Admin login required', true);
@@ -2441,9 +2412,6 @@ window.adminLogin = adminLogin;
                 }
             });
 
-            // ============================================================
-            // ADD CLASS
-            // ============================================================
             addClassBtn.addEventListener('click', async function() {
                 if (!currentUser || currentUser.role !== 'admin') {
                     showToast('🔒 Admin login required', true);
@@ -2491,9 +2459,6 @@ window.adminLogin = adminLogin;
                 }
             });
 
-            // ============================================================
-            // TEACHER LOAD STUDENTS
-            // ============================================================
             loadStudentsBtn.addEventListener('click', async function() {
                 if (!currentUser || currentUser.role !== 'teacher') {
                     showToast('🔒 Teacher login required', true);
@@ -2618,9 +2583,6 @@ window.adminLogin = adminLogin;
                 return 'badge-danger';
             }
 
-            // ============================================================
-            // SAVE RESULTS
-            // ============================================================
             saveResultsBtn.addEventListener('click', async function() {
                 if (!currentUser || currentUser.role !== 'teacher') {
                     showToast('🔒 Teacher login required', true);
@@ -2712,9 +2674,6 @@ window.adminLogin = adminLogin;
                 }
             });
 
-            // ============================================================
-            // BULK IMPORT (Admin)
-            // ============================================================
             bulkImportArea.addEventListener('click', () => bulkFileInput.click());
             bulkImportArea.addEventListener('dragover', e => { e.preventDefault();
                 bulkImportArea.classList.add('dragover'); });
@@ -2876,9 +2835,6 @@ window.adminLogin = adminLogin;
                 showToast('Cleared');
             });
 
-            // ============================================================
-            // BULK REGISTER TEMPLATE
-            // ============================================================
             bulkRegisterTemplateBtn.addEventListener('click', function() {
                 const wb = XLSX.utils.book_new();
                 const data = [
@@ -2893,9 +2849,6 @@ window.adminLogin = adminLogin;
                 showToast('📥 Template downloaded');
             });
 
-            // ============================================================
-            // TEACHER IMPORT (Excel)
-            // ============================================================
             teacherImportArea.addEventListener('click', () => teacherFileInput.click());
             teacherImportArea.addEventListener('dragover', e => { e.preventDefault();
                 teacherImportArea.classList.add('dragover'); });
@@ -3095,9 +3048,6 @@ window.adminLogin = adminLogin;
                 showToast('Cleared');
             });
 
-            // ============================================================
-            // TAB SWITCHING
-            // ============================================================
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -3119,9 +3069,6 @@ window.adminLogin = adminLogin;
                 });
             });
 
-            // ============================================================
-            // VIEW RESULTS
-            // ============================================================
             viewResultsBtn.addEventListener('click', async function() {
                 const number = studentNumber.value.trim();
                 const term = studentTerm.value;
@@ -3264,9 +3211,6 @@ window.adminLogin = adminLogin;
                 }
             });
 
-            // ============================================================
-            // DOWNLOAD RESULTS
-            // ============================================================
             downloadResultsBtn.addEventListener('click', function() {
                 const content = document.getElementById('resultsContent');
                 const info = document.getElementById('studentInfo');
@@ -3326,19 +3270,13 @@ window.adminLogin = adminLogin;
                 printWindow.document.close();
             });
 
-            // ============================================================
-            // INIT
-            // ============================================================
             initSupabase();
-
-            // Initialize admin tabs
             setupAdminTabs();
 
             console.log('🚀 Lukashya Secondary School App initialized');
             console.log('📚 Supabase URL:', SUPABASE_URL);
             console.log('🏫 Current School:', getCurrentSchool().name);
 
-            // Handle teacher import load preview button
             teacherImportLoadBtn.addEventListener('click', function() {
                 if (teacherFileInput.files.length > 0) {
                     handleTeacherImportFile(teacherFileInput.files[0]);
@@ -3347,7 +3285,6 @@ window.adminLogin = adminLogin;
                 }
             });
 
-            // Handle bulk register button
             bulkRegisterBtn.addEventListener('click', function() {
                 if (bulkFileInput.files.length > 0) {
                     handleBulkFile(bulkFileInput.files[0]);
