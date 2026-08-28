@@ -1837,7 +1837,7 @@
 
             function adminLogin() {
                 const pass = document.getElementById('adminLoginPassword').value.trim();
-                if (pass === 'admin123') {
+                if (pass === 'admin2426') {
                     currentUser = { role: 'admin' };
                     showToast('✅ Logged in as Admin');
                     loginModal.classList.remove('active');
@@ -1853,7 +1853,7 @@
                     loadStudents();
                     return;
                 }
-                showToast('❌ Invalid admin password. Default: admin123', true);
+                showToast('❌ Invalid admin password. Default: admin2426', true);
             }
             window.adminLogin = adminLogin;
 
