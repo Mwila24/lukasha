@@ -1847,66 +1847,62 @@
             // ============================================================
             // SECURE ADMIN LOGIN - Verifies against Supabase with hashing
             // ============================================================
-            async function adminLogin() {
-                const pass = document.getElementById('adminLoginPassword').value.trim();
-                
-                if (!pass) {
-                    showToast('⚠️ Please enter admin password', true);
-                    return;
-                }
-                
-                if (!supabaseClient || !isConnected) {
-                    showToast('⚠️ Database not connected', true);
-                    return;
-                }
-                
-                try {
-                    // Query the admin table for the stored password hash
-                    const { data, error } = await supabaseClient
-                        .from('admin')
-                        .select('password_hash')
-                        .maybeSingle();
-                        
-                    if (error) {
-                        showToast('❌ Database error: ' + error.message, true);
-                        console.error('Admin lookup error:', error);
-                        return;
-                    }
-                    
-                    if (!data) {
-                        showToast('❌ Admin account not configured. Please contact system administrator.', true);
-                        return;
-                    }
-                    
-                    // Hash the entered password and compare
-                    const hashedInput = await hashPassword(pass);
-                    
-                    if (data.password_hash !== hashedInput) {
-                        showToast('❌ Invalid admin password', true);
-                        return;
-                    }
-                    
-                    // Success - login as admin
-                    currentUser = { role: 'admin' };
-                    showToast('✅ Logged in as Admin');
-                    loginModal.classList.remove('active');
-                    updateLoginUI();
-                    adminLocked.style.display = 'none';
-                    adminContent.style.display = 'block';
-                    document.querySelector('.tab-btn[data-tab="admin"]').click();
-                    loadAdminStats();
-                    loadClasses();
-                    populateBulkClassDropdown();
-                    populateAdminDropdowns();
-                    loadAssignments();
-                    loadStudents();
-                    
-                } catch (err) {
-                    showToast('❌ Error: ' + err.message, true);
-                    console.error('Admin login error:', err);
-                }
-            }
-            window.adminLogin = adminLogin;
+         async function adminLogin() {
+    const pass = document.getElementById('adminLoginPassword').value.trim();
+    
+    if (!pass) {
+        showToast('Please enter admin password', true);
+        return;
+    }
+    
+    if (!supabaseClient || !isConnected) {
+        showToast('Database not connected', true);
+        return;
+    }
+    
+    try {
+        const { data, error } = await supabaseClient
+            .from('admin')
+            .select('password')
+            .limit(1)
+            .maybeSingle();
+            
+        if (error) {
+            showToast('Database error: ' + error.message, true);
+            console.error('Admin lookup error:', error);
+            return;
+        }
+        
+        if (!data) {
+            showToast('Admin account not configured. Please contact system administrator.', true);
+            return;
+        }
+        
+        if (data.password !== pass) {
+            showToast('Invalid admin password', true);
+            return;
+        }
+        
+        currentUser = { role: 'admin' };
+        showToast('Logged in as Admin');
+        loginModal.classList.remove('active');
+        updateLoginUI();
+        adminLocked.style.display = 'none';
+        adminContent.style.display = 'block';
+        document.querySelector('.tab-btn[data-tab="admin"]').click();
+        loadAdminStats();
+        loadClasses();
+        populateBulkClassDropdown();
+        populateAdminDropdowns();
+        loadAssignments();
+        loadStudents();
+        
+    } catch (err) {
+        showToast('Error: ' + err.message, true);
+        console.error('Admin login error:', err);
+    }
+}
+window.adminLogin = adminLogin;
 
             // ============================================================
             // SUPABASE INIT
