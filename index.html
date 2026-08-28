@@ -1785,52 +1785,78 @@
             }
             window.studentLogin = studentLogin;
 
-            function teacherLogin() {
-                const username = document.getElementById('teacherLoginUsername').value.trim();
-                const password = document.getElementById('teacherLoginPassword').value.trim();
+           function teacherLogin() {
+    const username = document.getElementById('teacherLoginUsername').value.trim();
+    const password = document.getElementById('teacherLoginPassword').value.trim();
 
-                if (!username) { showToast('⚠️ Please enter your username', true); return; }
-                if (!password) { showToast('⚠️ Please enter your password', true); return; }
+    if (!username) { 
+        showToast('⚠️ Please enter your username', true); 
+        return; 
+    }
+    if (!password) { 
+        showToast('⚠️ Please enter your password', true); 
+        return; 
+    }
 
-                if (!supabaseClient || !isConnected) {
-                    showToast('⚠️ Database not connected', true);
-                    return;
-                }
+    if (!supabaseClient || !isConnected) {
+        showToast('⚠️ Database not connected', true);
+        return;
+    }
 
-                supabaseClient
-                    .from('teachers')
-                    .select('*')
-                    .eq('username', username)
-                    .maybeSingle()
-                    .then(({ data, error }) => {
-                        if (error) {
-                            showToast('❌ Database error: ' + error.message, true);
-                            return;
-                        }
-                        if (!data) {
-                            showToast('❌ Teacher not found. Please contact administrator.', true);
-                            return;
-                        }
-                        if (data.password !== password) {
-                            showToast('❌ Invalid password. Please try again.', true);
-                            return;
-                        }
+    // Show loading state
+    const loginBtn = document.querySelector('#teacherLoginForm .btn-submit');
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
 
-                        currentUser = { role: 'teacher', id: data.id, name: data.name };
-                        showToast('✅ Logged in as teacher: ' + data.name);
-                        loginModal.classList.remove('active');
-                        updateLoginUI();
-                        teacherLocked.style.display = 'none';
-                        teacherContent.style.display = 'block';
-                        document.querySelector('.tab-btn[data-tab="teacher"]').click();
-                        teacherNameDisplay.textContent = `Welcome, ${data.name}`;
-                    })
-                    .catch(err => {
-                        showToast('❌ Error: ' + err.message, true);
-                        console.error(err);
-                    });
+    supabaseClient
+        .from('teachers')
+        .select('*')
+        .eq('username', username)
+        .maybeSingle()
+        .then(({ data, error }) => {
+            // Reset button
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+
+            if (error) {
+                console.error('Database error:', error);
+                showToast('❌ Database error: ' + error.message, true);
+                return;
             }
-            window.teacherLogin = teacherLogin;
+            
+            if (!data) {
+                showToast('❌ Teacher not found. Please check your username or contact administrator.', true);
+                return;
+            }
+            
+            // Debug - log what we found
+            console.log('Teacher found:', data.name);
+            console.log('Entered password:', password);
+            console.log('Stored password:', data.password);
+            
+            if (data.password !== password) {
+                showToast('❌ Invalid password. Please try again.', true);
+                return;
+            }
+
+            // Login successful
+            currentUser = { role: 'teacher', id: data.id, name: data.name };
+            showToast('✅ Logged in as teacher: ' + data.name);
+            loginModal.classList.remove('active');
+            updateLoginUI();
+            teacherLocked.style.display = 'none';
+            teacherContent.style.display = 'block';
+            document.querySelector('.tab-btn[data-tab="teacher"]').click();
+            teacherNameDisplay.textContent = 'Welcome, ' + data.name;
+        })
+        .catch(err => {
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            showToast('❌ Error: ' + err.message, true);
+            console.error('Login error:', err);
+        });
+}
+window.teacherLogin = teacherLogin;
 
             // ============================================================
             // SHA-256 HASH FUNCTION
