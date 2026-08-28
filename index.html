@@ -1281,7 +1281,7 @@
                     </button>
                 </div>
 
-                               <!-- Teacher Login -->
+                <!-- Teacher Login -->
                 <div class="login-form" id="teacherLoginForm">
                     <div class="field">
                         <label><i class="fas fa-user"></i> Username</label>
@@ -1832,9 +1832,47 @@
             }
             window.teacherLogin = teacherLogin;
 
-            function adminLogin() {
+            // ============================================================
+            // SECURE ADMIN LOGIN - Verifies against Supabase
+            // ============================================================
+            async function adminLogin() {
                 const pass = document.getElementById('adminLoginPassword').value.trim();
-                if (pass === 'admin2426') {
+                
+                if (!pass) {
+                    showToast('⚠️ Please enter admin password', true);
+                    return;
+                }
+                
+                if (!supabaseClient || !isConnected) {
+                    showToast('⚠️ Database not connected', true);
+                    return;
+                }
+                
+                try {
+                    // Query the admin table for the stored password
+                    const { data, error } = await supabaseClient
+                        .from('admin')
+                        .select('password')
+                        .maybeSingle();
+                        
+                    if (error) {
+                        showToast('❌ Database error: ' + error.message, true);
+                        console.error('Admin lookup error:', error);
+                        return;
+                    }
+                    
+                    if (!data) {
+                        showToast('❌ Admin account not configured. Please contact the system administrator.', true);
+                        return;
+                    }
+                    
+                    // Verify the entered password against the stored password
+                    if (data.password !== pass) {
+                        showToast('❌ Invalid admin password', true);
+                        return;
+                    }
+                    
+                    // Success - login as admin
                     currentUser = { role: 'admin' };
                     showToast('✅ Logged in as Admin');
                     loginModal.classList.remove('active');
@@ -1848,9 +1886,11 @@
                     populateAdminDropdowns();
                     loadAssignments();
                     loadStudents();
-                    return;
+                    
+                } catch (err) {
+                    showToast('❌ Error: ' + err.message, true);
+                    console.error('Admin login error:', err);
                 }
-                showToast('Wrong Password', true);
             }
             window.adminLogin = adminLogin;
 
