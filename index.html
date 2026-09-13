@@ -1374,8 +1374,9 @@
 
                 <div class="card">
                     <div class="admin-tabs" id="adminTabs2">
-                        <button class="admin-tab active" data-admintab="assignments2"><i class="fas fa-tasks"></i> Assignments</button>
-                        <button class="admin-tab" data-admintab="learners2"><i class="fas fa-users"></i> Learners Work</button>
+                        <button class="admin-tab active" data-admintab="assignmentsTab2"><i class="fas fa-tasks"></i> Assignments</button>
+                        <button class="admin-tab" data-admintab="learnersTab2"><i class="fas fa-users"></i> Learners Work</button>
+                        <button class="admin-tab" data-admintab="analysisTab2"><i class="fas fa-chart-bar"></i> Analysis &amp; Reports</button>
                     </div>
 
                     <div id="assignmentsTab2" class="admin-tab-content active">
@@ -1456,6 +1457,80 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="analysisTab2" class="admin-tab-content">
+                        <div class="card-header">
+                            <h2><i class="fas fa-chart-bar"></i> Result Analysis &amp; Reports</h2>
+                            <span class="subtitle">Generate class/subject performance analysis and download report sheets</span>
+                        </div>
+                        <div class="grid-3">
+                            <div class="field">
+                                <label><i class="fas fa-users"></i> Class</label>
+                                <select id="analysisClassSelect"><option value="">All Classes</option></select>
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-book"></i> Subject</label>
+                                <select id="analysisSubjectSelect">
+                                    <option value="">All Subjects</option>
+                                    <option value="English">English</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Biology">Biology</option>
+                                    <option value="Chemistry">Chemistry</option>
+                                    <option value="Physics">Physics</option>
+                                    <option value="History">History</option>
+                                    <option value="Geography">Geography</option>
+                                    <option value="Civic Education">Civic Education</option>
+                                    <option value="Zambian Languages">Zambian Languages</option>
+                                    <option value="Religious Education">Religious Education</option>
+                                    <option value="Commerce">Commerce</option>
+                                    <option value="Principles of Accounts">Principles of Accounts</option>
+                                    <option value="Agricultural Science">Agricultural Science</option>
+                                    <option value="ICT">ICT</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-tag"></i> Test Type</label>
+                                <select id="analysisTestTypeSelect">
+                                    <option value="">Select</option>
+                                    <option value="mid_term">Mid Term</option>
+                                    <option value="end_term">End of Term</option>
+                                    <option value="combined">Combined (Mid + End)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid-3">
+                            <div class="field">
+                                <label><i class="fas fa-calendar-alt"></i> Term</label>
+                                <select id="analysisTermSelect"><option value="">Select</option><option value="1">Term 1</option><option value="2">Term 2</option><option value="3">Term 3</option></select>
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-calendar-year"></i> Year</label>
+                                <select id="analysisYearSelect"><option value="">Select</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option></select>
+                            </div>
+                            <div class="field" style="justify-content:flex-end;">
+                                <button class="btn btn-primary btn-block" id="generateAnalysisBtn"><i class="fas fa-chart-line"></i> Generate Analysis</button>
+                            </div>
+                        </div>
+
+                        <div id="analysisResultsArea" style="display:none;margin-top:20px;">
+                            <h3 id="analysisSummaryTitle" style="color:var(--marian-blue);font-family:var(--font-display);margin-bottom:12px;"></h3>
+                            <div class="grid-4" id="analysisStatCards" style="margin-bottom:20px;"></div>
+
+                            <div class="card" style="border-top-color: var(--gold);">
+                                <div class="card-header"><h2><i class="fas fa-chart-pie"></i> Grade Distribution</h2></div>
+                                <div id="analysisGradeDistribution"></div>
+                            </div>
+
+                            <div style="margin:16px 0;display:flex;gap:8px;flex-wrap:wrap;">
+                                <button class="btn btn-success no-print" id="analysisDownloadExcelBtn" style="display:none;"><i class="fas fa-file-excel"></i> Download Excel</button>
+                                <button class="btn btn-outline no-print" id="analysisDownloadPdfBtn" style="display:none;"><i class="fas fa-file-pdf"></i> Download PDF</button>
+                            </div>
+
+                            <div class="table-wrapper">
+                                <table id="analysisTable"></table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card" style="border-top-color: var(--oxblood);">
@@ -1472,7 +1547,7 @@
                 </div>
 
                 <div class="grid-2">
-                    <div class="card"><div class="card-header"><h2><i class="fas fa-user-plus"></i> Add Teacher</h2></div><div class="field"><label>Name</label><input type="text" id="adminTeacherName" placeholder="e.g. John Banda"></div><div class="field"><label>Username</label><input type="text" id="adminTeacherUsername" placeholder="******"></div><div class="field"><label>Password</label><input type="password" id="**********d" placeholder="Enter password"></div><button class="btn btn-success btn-block" id="addTeacherBtn"><i class="fas fa-plus"></i> Add Teacher</button></div>
+                    <div class="card"><div class="card-header"><h2><i class="fas fa-user-plus"></i> Add Teacher</h2></div><div class="field"><label>Name</label><input type="text" id="adminTeacherName" placeholder="e.g. John Banda"></div><div class="field"><label>Username</label><input type="text" id="adminTeacherUsername" placeholder="******"></div><div class="field"><label>Password</label><input type="password" id="adminTeacherPassword" placeholder="Enter password"></div><button class="btn btn-success btn-block" id="addTeacherBtn"><i class="fas fa-plus"></i> Add Teacher</button></div>
                 </div>
                 <div class="card"><div class="card-header"><h2><i class="fas fa-users"></i> Class Management</h2><span class="subtitle">View & manage classes</span></div><div class="table-wrapper"><table><thead><tr><th>#</th><th>Class Name</th><th>Grade</th><th>Stream</th><th>Students</th><th>Action</th></tr></thead><tbody id="classesTableBody"><tr><td colspan="6" style="text-align:center;color:var(--ink-faint);">Loading...</td></tr></tbody></table></div><div style="margin-top:16px;"><div class="grid-3"><div class="field"><label><i class="fas fa-graduation-cap"></i> Grade</label><select id="newClassGrade"><option value="">Select</option><option value="Form1">Form 1</option><option value="Form2">Form 2</option><option value="Grade10">Grade 10</option><option value="Grade11">Grade 11</option><option value="Grade12">Grade 12</option></select></div><div class="field"><label><i class="fas fa-layer-group"></i> Stream</label><select id="newClassStream"><option value="">Select</option><option value="Mary">Mary</option><option value="Joseph">Joseph</option><option value="Mazz">Mazz</option><option value="Laura">Laura</option></select></div></div><button class="btn btn-success btn-block" id="addClassBtn"><i class="fas fa-plus"></i> Add Class</button></div></div>
             </div>
@@ -1521,6 +1596,7 @@
             let bulkData = null;
             let teacherImportData = null;
             let currentSchoolCode = 'LGSS';
+            let currentAnalysisData = null;
 
             const toastDiv = document.getElementById('globalToast');
             const toastMsg = document.getElementById('toastMsg');
@@ -1605,6 +1681,21 @@
             const bulkRegisterTemplateBtn = document.getElementById('bulkRegisterTemplateBtn');
             const bulkRegisterBtn = document.getElementById('bulkRegisterBtn');
 
+            // Analysis & Reports DOM references
+            const analysisClassSelect = document.getElementById('analysisClassSelect');
+            const analysisSubjectSelect = document.getElementById('analysisSubjectSelect');
+            const analysisTestTypeSelect = document.getElementById('analysisTestTypeSelect');
+            const analysisTermSelect = document.getElementById('analysisTermSelect');
+            const analysisYearSelect = document.getElementById('analysisYearSelect');
+            const generateAnalysisBtn = document.getElementById('generateAnalysisBtn');
+            const analysisResultsArea = document.getElementById('analysisResultsArea');
+            const analysisSummaryTitle = document.getElementById('analysisSummaryTitle');
+            const analysisStatCards = document.getElementById('analysisStatCards');
+            const analysisGradeDistribution = document.getElementById('analysisGradeDistribution');
+            const analysisTable = document.getElementById('analysisTable');
+            const analysisDownloadExcelBtn = document.getElementById('analysisDownloadExcelBtn');
+            const analysisDownloadPdfBtn = document.getElementById('analysisDownloadPdfBtn');
+
             const SCHOOL_CONFIG = {
                 schools: {
                     'LGSS': {
@@ -1654,17 +1745,17 @@
             }
 
             function setupAdminTabs() {
-                const tabSet = {
-                    tabs: document.querySelectorAll('#adminTabs2 .admin-tab'),
-                    contents: ['assignmentsTab2', 'learnersTab2']
-                };
+                const tabs = document.querySelectorAll('#adminTabs2 .admin-tab');
+                const contents = ['assignmentsTab2', 'learnersTab2', 'analysisTab2'];
 
-                tabSet.tabs.forEach(tab => {
+                tabs.forEach(tab => {
+                    if (tab.dataset.bound === 'true') return;
+                    tab.dataset.bound = 'true';
                     tab.addEventListener('click', function() {
                         const target = this.dataset.admintab;
-                        tabSet.tabs.forEach(t => t.classList.remove('active'));
+                        tabs.forEach(t => t.classList.remove('active'));
                         this.classList.add('active');
-                        tabSet.contents.forEach(id => {
+                        contents.forEach(id => {
                             const el = document.getElementById(id);
                             if (el) el.classList.remove('active');
                         });
@@ -1752,9 +1843,6 @@
             }
             window.studentLogin = studentLogin;
 
-            // ============================================================
-            // UPDATED TEACHER LOGIN WITH DEBUGGING
-            // ============================================================
             function teacherLogin() {
                 const username = document.getElementById('teacherLoginUsername').value.trim();
                 const password = document.getElementById('teacherLoginPassword').value.trim();
@@ -1798,7 +1886,6 @@
                         }
                         
                         if (!data || data.length === 0) {
-                            // Try to show all teachers to help debug
                             supabaseClient
                                 .from('teachers')
                                 .select('username')
@@ -1843,9 +1930,6 @@
             }
             window.teacherLogin = teacherLogin;
 
-            // ============================================================
-            // ADMIN LOGIN
-            // ============================================================
             async function hashPassword(password) {
                 const encoder = new TextEncoder();
                 const data = encoder.encode(password);
@@ -1909,8 +1993,10 @@
                     loadClasses();
                     populateBulkClassDropdown();
                     populateAdminDropdowns();
+                    populateAnalysisClassDropdown();
                     loadAssignments();
                     loadStudents();
+                    setupAdminTabs();
                     
                 } catch (err) {
                     showToast('❌ Error: ' + err.message, true);
@@ -1919,9 +2005,6 @@
             }
             window.adminLogin = adminLogin;
 
-            // ============================================================
-            // SUPABASE INIT
-            // ============================================================
             function initSupabase() {
                 try {
                     const savedSchool = localStorage.getItem('selectedSchool');
@@ -1977,6 +2060,7 @@
                 populateBulkClassDropdown();
                 populateImportClassDropdowns();
                 populateAdminDropdowns();
+                populateAnalysisClassDropdown();
                 loadAssignments();
                 loadStudents();
                 updateLoginUI();
@@ -2059,6 +2143,17 @@
                         o.textContent = c.display;
                         drop.appendChild(o);
                     });
+                });
+            }
+
+            function populateAnalysisClassDropdown() {
+                if (!analysisClassSelect) return;
+                analysisClassSelect.innerHTML = '<option value="">All Classes</option>';
+                CLASS_DEFINITIONS.forEach(c => {
+                    const o = document.createElement('option');
+                    o.value = c.id;
+                    o.textContent = c.display;
+                    analysisClassSelect.appendChild(o);
                 });
             }
 
@@ -2449,6 +2544,7 @@
                     loadClasses();
                     populateClassDropdowns();
                     populateAdminDropdowns();
+                    populateAnalysisClassDropdown();
                 } catch (err) {
                     if (err.message.includes('duplicate')) {
                         showToast('❌ Class already exists', true);
@@ -2582,6 +2678,271 @@
                 if (score >= 50) return 'badge-purple';
                 return 'badge-danger';
             }
+
+            function escapeHtml(str) {
+                return String(str ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+            }
+
+            async function generateAnalysisReport() {
+                if (!currentUser || currentUser.role !== 'admin') {
+                    showToast('🔒 Admin login required', true);
+                    return;
+                }
+
+                const classId = analysisClassSelect.value;
+                const subject = analysisSubjectSelect.value;
+                const term = analysisTermSelect.value;
+                const year = analysisYearSelect.value;
+                const testType = analysisTestTypeSelect.value;
+
+                if (!term || !year || !testType) {
+                    showToast('⚠️ Please select term, year and test type', true);
+                    return;
+                }
+                if (!supabaseClient || !isConnected) {
+                    showToast('⚠️ Database not connected', true);
+                    return;
+                }
+
+                try {
+                    showToast('🔄 Generating analysis...');
+
+                    let studentQuery = supabaseClient.from('students').select('id, name, student_number, class');
+                    if (classId) studentQuery = studentQuery.eq('class', classId);
+                    const { data: students, error: sErr } = await studentQuery;
+                    if (sErr) throw sErr;
+
+                    if (!students || students.length === 0) {
+                        showToast('⚠️ No students found for this selection', true);
+                        analysisResultsArea.style.display = 'none';
+                        return;
+                    }
+
+                    const studentIds = students.map(s => s.id);
+
+                    let resultQuery = supabaseClient.from('results')
+                        .select('student_id, subject, score, test_type')
+                        .in('student_id', studentIds)
+                        .eq('term', term)
+                        .eq('year', year);
+                    if (subject) resultQuery = resultQuery.eq('subject', subject);
+                    if (testType !== 'combined') resultQuery = resultQuery.eq('test_type', testType);
+
+                    const { data: results, error: rErr } = await resultQuery;
+                    if (rErr) throw rErr;
+
+                    const studentMap = {};
+                    students.forEach(s => { studentMap[s.id] = { ...s, subjects: {} }; });
+
+                    (results || []).forEach(r => {
+                        const rec = studentMap[r.student_id];
+                        if (!rec) return;
+                        if (!rec.subjects[r.subject]) rec.subjects[r.subject] = {};
+                        rec.subjects[r.subject][r.test_type] = r.score;
+                    });
+
+                    const rows = [];
+                    Object.values(studentMap).forEach(rec => {
+                        const subjectScores = {};
+                        Object.keys(rec.subjects).forEach(subj => {
+                            const entry = rec.subjects[subj];
+                            let resolved = null;
+                            if (testType === 'combined') {
+                                if (entry.mid_term != null && entry.end_term != null) resolved = Math.round((entry.mid_term + entry.end_term) / 2);
+                                else if (entry.mid_term != null) resolved = entry.mid_term;
+                                else if (entry.end_term != null) resolved = entry.end_term;
+                            } else {
+                                resolved = entry[testType] != null ? entry[testType] : null;
+                            }
+                            if (resolved != null) subjectScores[subj] = resolved;
+                        });
+
+                        const values = Object.values(subjectScores);
+                        if (values.length === 0) return;
+
+                        const avg = Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+                        rows.push({
+                            id: rec.id,
+                            name: rec.name,
+                            number: rec.student_number,
+                            classId: rec.class,
+                            subjectScores,
+                            average: avg,
+                            grade: getGrade(avg)
+                        });
+                    });
+
+                    if (rows.length === 0) {
+                        showToast('⚠️ No results found for this selection', true);
+                        analysisResultsArea.style.display = 'none';
+                        return;
+                    }
+
+                    rows.sort((a, b) => b.average - a.average);
+                    rows.forEach((r, i) => r.rank = i + 1);
+
+                    const scores = rows.map(r => r.average);
+                    const classAverage = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+                    const highest = Math.max(...scores);
+                    const lowest = Math.min(...scores);
+                    const passRate = Math.round((scores.filter(s => s >= 50).length / scores.length) * 100);
+
+                    const gradeCounts = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+                    rows.forEach(r => gradeCounts[r.grade]++);
+
+                    currentAnalysisData = { rows, classAverage, highest, lowest, passRate, gradeCounts, classId, subject, term, year, testType };
+                    renderAnalysisReport(currentAnalysisData);
+                    showToast(`✅ Analysis generated for ${rows.length} students`);
+
+                } catch (err) {
+                    showToast('❌ Error: ' + err.message, true);
+                    console.error(err);
+                }
+            }
+
+            function renderAnalysisReport(data) {
+                const { rows, classAverage, highest, lowest, passRate, gradeCounts, classId, subject, term, year, testType } = data;
+
+                const classLabel = classId ? (CLASS_DEFINITIONS.find(c => c.id === classId)?.display || classId) : 'All Classes';
+                const subjectLabel = subject || 'All Subjects';
+                const testTypeLabel = testType === 'mid_term' ? 'Mid Term' : testType === 'end_term' ? 'End of Term' : 'Combined (Mid + End)';
+
+                analysisSummaryTitle.textContent = `${classLabel} · ${subjectLabel} · Term ${term} ${year} · ${testTypeLabel}`;
+
+                analysisStatCards.innerHTML = `
+                    <div class="stat-card"><div class="icon"><i class="fas fa-users"></i></div><div class="number">${rows.length}</div><div class="label">Students</div></div>
+                    <div class="stat-card"><div class="icon"><i class="fas fa-chart-line"></i></div><div class="number">${classAverage}%</div><div class="label">Class Average</div></div>
+                    <div class="stat-card"><div class="icon"><i class="fas fa-arrow-up"></i></div><div class="number">${highest}%</div><div class="label">Highest</div></div>
+                    <div class="stat-card"><div class="icon"><i class="fas fa-check-circle"></i></div><div class="number">${passRate}%</div><div class="label">Pass Rate (≥50%)</div></div>
+                `;
+
+                const gradeColors = { A: '#2e7d32', B: '#0d47a1', C: '#e65100', D: '#6a1b9a', E: '#c62828' };
+                let barsHtml = '';
+                ['A', 'B', 'C', 'D', 'E'].forEach(g => {
+                    const count = gradeCounts[g] || 0;
+                    const pct = rows.length ? Math.round((count / rows.length) * 100) : 0;
+                    barsHtml += `
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                            <div style="width:24px;font-weight:700;color:${gradeColors[g]};">${g}</div>
+                            <div style="flex:1;background:var(--paper);border-radius:8px;overflow:hidden;height:20px;">
+                                <div style="width:${pct}%;background:${gradeColors[g]};height:100%;"></div>
+                            </div>
+                            <div style="width:70px;text-align:right;font-size:12.5px;color:var(--ink-soft);">${count} (${pct}%)</div>
+                        </div>`;
+                });
+                analysisGradeDistribution.innerHTML = barsHtml;
+
+                const allSubjects = subject ? [subject] : [...new Set(rows.flatMap(r => Object.keys(r.subjectScores)))].sort();
+
+                let theadHtml = `<tr><th>Rank</th><th>Name</th><th>Number</th>`;
+                if (!classId) theadHtml += `<th>Class</th>`;
+                if (allSubjects.length > 1) {
+                    allSubjects.forEach(s => theadHtml += `<th>${escapeHtml(s)}</th>`);
+                    theadHtml += `<th>Average</th><th>Grade</th>`;
+                } else {
+                    theadHtml += `<th>Score</th><th>Grade</th>`;
+                }
+                theadHtml += `</tr>`;
+
+                let tbodyHtml = '';
+                rows.forEach(r => {
+                    const classDisplay = CLASS_DEFINITIONS.find(c => c.id === r.classId)?.display || r.classId || 'N/A';
+                    tbodyHtml += `<tr><td>${r.rank}</td><td><strong>${escapeHtml(r.name)}</strong></td><td>${escapeHtml(r.number)}</td>`;
+                    if (!classId) tbodyHtml += `<td>${escapeHtml(classDisplay)}</td>`;
+                    if (allSubjects.length > 1) {
+                        allSubjects.forEach(s => {
+                            tbodyHtml += `<td style="text-align:center;">${r.subjectScores[s] != null ? r.subjectScores[s] : '-'}</td>`;
+                        });
+                        tbodyHtml += `<td style="text-align:center;font-weight:700;background:var(--gold-tint);">${r.average}</td>`;
+                    } else {
+                        tbodyHtml += `<td style="text-align:center;font-weight:700;">${r.average}</td>`;
+                    }
+                    tbodyHtml += `<td style="text-align:center;"><span class="badge ${getGradeClass(r.average)}">${r.grade}</span></td></tr>`;
+                });
+
+                analysisTable.innerHTML = `<thead>${theadHtml}</thead><tbody>${tbodyHtml}</tbody>`;
+
+                analysisResultsArea.style.display = 'block';
+                analysisDownloadExcelBtn.style.display = 'inline-flex';
+                analysisDownloadPdfBtn.style.display = 'inline-flex';
+            }
+
+            if (generateAnalysisBtn) generateAnalysisBtn.addEventListener('click', generateAnalysisReport);
+
+            if (analysisDownloadExcelBtn) analysisDownloadExcelBtn.addEventListener('click', function() {
+                if (!currentAnalysisData) return;
+                const { rows, classId, subject, term, year, classAverage, highest, lowest, passRate } = currentAnalysisData;
+                const allSubjects = subject ? [subject] : [...new Set(rows.flatMap(r => Object.keys(r.subjectScores)))].sort();
+
+                const header = ['Rank', 'Name', 'Student Number'];
+                if (!classId) header.push('Class');
+                if (allSubjects.length > 1) { allSubjects.forEach(s => header.push(s)); header.push('Average', 'Grade'); }
+                else { header.push('Score', 'Grade'); }
+
+                const aoa = [header];
+                rows.forEach(r => {
+                    const classDisplay = CLASS_DEFINITIONS.find(c => c.id === r.classId)?.display || r.classId || 'N/A';
+                    const row = [r.rank, r.name, r.number];
+                    if (!classId) row.push(classDisplay);
+                    if (allSubjects.length > 1) {
+                        allSubjects.forEach(s => row.push(r.subjectScores[s] != null ? r.subjectScores[s] : ''));
+                        row.push(r.average, r.grade);
+                    } else {
+                        row.push(r.average, r.grade);
+                    }
+                    aoa.push(row);
+                });
+
+                aoa.push([]);
+                aoa.push(['Class Average', classAverage]);
+                aoa.push(['Highest', highest]);
+                aoa.push(['Lowest', lowest]);
+                aoa.push(['Pass Rate (%)', passRate]);
+
+                const ws = XLSX.utils.aoa_to_sheet(aoa);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Analysis');
+                const classLabel = classId ? (CLASS_DEFINITIONS.find(c => c.id === classId)?.display || classId) : 'AllClasses';
+                XLSX.writeFile(wb, `Analysis_${classLabel.replace(/\s+/g, '_')}_${subject || 'AllSubjects'}_T${term}_${year}.xlsx`);
+                showToast('📥 Excel report downloaded');
+            });
+
+            if (analysisDownloadPdfBtn) analysisDownloadPdfBtn.addEventListener('click', function() {
+                if (!currentAnalysisData) return;
+                const printWindow = window.open('', '_blank', 'width=1000,height=700');
+                if (!printWindow) { showToast('⚠️ Please allow popups for this site', true); return; }
+
+                const school = getCurrentSchool();
+                printWindow.document.write(`
+                    <html><head><title>Result Analysis Report</title>
+                    <style>
+                        body { font-family: 'IBM Plex Sans', sans-serif; padding: 20px; }
+                        .report-header { text-align:center;margin-bottom:16px;border-bottom:2px solid #B8862E;padding-bottom:10px; }
+                        .report-header h1 { color:#1a237e;font-family:'Fraunces',serif; }
+                        .report-header .motto { color:#B8862E;font-style:italic; }
+                        .stats-row { display:flex;gap:12px;justify-content:center;margin-bottom:16px;flex-wrap:wrap; }
+                        .stats-row .stat-card { border:1px solid #ddd;border-radius:10px;padding:10px 16px;text-align:center;min-width:100px; }
+                        .stats-row .number { font-size:20px;font-weight:700;color:#1a237e; }
+                        .stats-row .label { font-size:10px;color:#8A968C;text-transform:uppercase; }
+                        table { width:100%;border-collapse:collapse;font-size:11px;margin-top:10px; }
+                        th { background:#1a237e;color:#fff;padding:5px 8px;text-align:left; }
+                        td { padding:5px 8px;border-bottom:1px solid #ddd; }
+                        .badge { display:inline-block;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:600; }
+                        .badge-success{background:#e8f5e9;color:#2e7d32;} .badge-info{background:#e3f2fd;color:#0d47a1;}
+                        .badge-warning{background:#fff3e0;color:#e65100;} .badge-purple{background:#f3e5f5;color:#6a1b9a;}
+                        .badge-danger{background:#ffebee;color:#c62828;}
+                        .footer { text-align:center;margin-top:20px;font-size:10px;color:#8A968C;border-top:1px solid #ddd;padding-top:10px; }
+                    </style></head><body>
+                    <div class="report-header"><h1>${school.name}</h1><div class="motto">${school.motto}</div><p style="font-size:12px;color:#4B5A50;">${school.location}</p></div>
+                    <h3 style="text-align:center;color:#1a237e;">${analysisSummaryTitle.textContent}</h3>
+                    <div class="stats-row">${analysisStatCards.innerHTML}</div>
+                    <div class="table-wrapper">${analysisTable.outerHTML}</div>
+                    <div class="footer">${school.name} · ${school.location} · Generated on ${new Date().toLocaleDateString()}</div>
+                    <script>window.onload = function(){ window.print(); }<\/script>
+                    </body></html>
+                `);
+                printWindow.document.close();
+            });
 
             saveResultsBtn.addEventListener('click', async function() {
                 if (!currentUser || currentUser.role !== 'teacher') {
@@ -3061,6 +3422,7 @@
                         loadClasses();
                         loadAssignments();
                         loadStudents();
+                        populateAnalysisClassDropdown();
                     }
                     if (tab === 'teacher' && currentUser && currentUser.role === 'teacher') {
                         teacherLocked.style.display = 'none';
