@@ -1943,17 +1943,15 @@
                                     showToast('❌ Teacher not found. Please contact administrator.', true);
                                 });
                             return;
-                        }
-                        
-                        const teacher = data[0];
-                        console.log('✅ Teacher found:', teacher.name);
-                        console.log('🔑 Entered password:', password);
-                        console.log('🔑 Stored password:', teacher.password);
-                        
-                        if (teacher.password !== password) {
-                            showToast('❌ Invalid password. Please try again.', true);
-                            return;
-                        }
+                      // NEW:
+const teacher = data[0];
+console.log('✅ Teacher found:', teacher.name);
+
+const hashedInput = await hashPassword(password);
+if (teacher.password_hash !== hashedInput) {
+    showToast('❌ Invalid password. Please try again.', true);
+    return;
+}
 
                         currentUser = { role: 'teacher', id: teacher.id, name: teacher.name };
                         showToast('✅ Logged in as teacher: ' + teacher.name);
