@@ -810,6 +810,11 @@
                 updateLoginUI();
                 teacherLocked.style.display = 'none';
                 teacherContent.style.display = 'block';
+
+                /* PATCH 4a: ensure class dropdowns are populated at login */
+                populateClassDropdowns();
+                populateImportClassDropdowns();
+
                 document.querySelector('.tab-btn[data-tab="teacher"]').click();
                 teacherNameDisplay.textContent = 'Welcome, ' + teacher.name;
             } catch (err) {
@@ -938,21 +943,61 @@
         }
         window.adminLogin = adminLogin;
 
-        /* Load classes from DB and cache them */
+        /* ============================================================
+           PATCH 1: shared class-data applier + auto-seed + fallback
+           ============================================================ */
+
+        /* Single source of truth for populating CLASS_CACHE + CLASS_LIST */
+        function applyClassData(data) {
+            CLASS_CACHE = {};
+            CLASS_LIST = [];
+            (data || []).forEach(c => {
+                const display = c.display_name || ((c.grade || '') + ' ' + (c.stream || '')).trim();
+                CLASS_CACHE[String(c.id)] = display;
+                CLASS_LIST.push({ id: c.id, grade: c.grade, stream: c.stream, display });
+            });
+            /* FALLBACK: if the DB has no classes (empty table or RLS blocked reads),
+               fall back to the standard class list so teachers can still work. */
+            if (CLASS_LIST.length === 0) {
+                CLASS_DEFINITIONS.forEach(c => {
+                    CLASS_CACHE[c.id] = c.display;
+                    CLASS_LIST.push({ id: c.id, display: c.display });
+                });
+            }
+        }
+
+        /* Auto-seed the classes table with the standard 15 classes if it is empty */
+        async function ensureClassesExist() {
+            if (!supabaseClient || !isConnected) return;
+            try {
+                const { count, error } = await supabaseClient
+                    .from('classes').select('*', { count:'exact', head:true });
+                if (error) { console.warn('Cannot count classes:', error.message); return; }
+                if (count && count > 0) return;          /* already seeded */
+
+                const rows = CLASS_DEFINITIONS.map(c => {
+                    const parts = c.id.split('_');
+                    return { grade: parts[0], stream: parts[1], display_name: c.display };
+                });
+                const { error: insErr } = await supabaseClient.from('classes').insert(rows);
+                if (insErr) console.warn('Could not seed classes:', insErr.message);
+                else        console.log('✅ Seeded standard classes');
+            } catch (e) { console.error('ensureClassesExist error:', e); }
+        }
+
         async function loadClassesIntoCache() {
             if (!supabaseClient || !isConnected) return;
             try {
-                const { data, error } = await supabaseClient.from('classes')
-                    .select('id, grade, stream, display_name').order('grade', { ascending: true });
+                const { data, error } = await supabaseClient
+                    .from('classes')
+                    .select('id, grade, stream, display_name')
+                    .order('grade', { ascending: true });
                 if (error) throw error;
-                CLASS_CACHE = {};
-                CLASS_LIST = [];
-                (data || []).forEach(c => {
-                    const display = c.display_name || ((c.grade || '') + ' ' + (c.stream || '')).trim();
-                    CLASS_CACHE[String(c.id)] = display;
-                    CLASS_LIST.push({ id: c.id, grade: c.grade, stream: c.stream, display });
-                });
-            } catch (e) { console.error('Error loading class cache:', e); }
+                applyClassData(data);
+            } catch (e) {
+                console.error('Error loading class cache:', e);
+                applyClassData(null);   /* ensures fallback list is loaded */
+            }
         }
 
         function getClassDisplay(classId) {
@@ -1034,7 +1079,8 @@
                         isConnected = true;
                         setConnectionStatus('online', 'Connected');
                         showToast('✅ Database connected');
-                        loadAllData();
+                        /* PATCH 3: seed classes if table is empty, then load everything */
+                        ensureClassesExist().finally(() => loadAllData());
                     })
                     .catch(err => {
                         setConnectionStatus('offline', 'Error');
@@ -1089,12 +1135,9 @@
                 const { data, error } = await supabaseClient.from('classes').select('*').order('grade', { ascending:true });
                 if (error) throw error;
 
-                CLASS_CACHE = {}; CLASS_LIST = [];
-                (data || []).forEach(c => {
-                    const display = c.display_name || ((c.grade || '') + ' ' + (c.stream || '')).trim();
-                    CLASS_CACHE[String(c.id)] = display;
-                    CLASS_LIST.push({ id: c.id, grade: c.grade, stream: c.stream, display });
-                });
+                /* PATCH 2: use the shared applier (includes fallback) */
+                applyClassData(data);
+
                 populateClassDropdowns();
                 populateImportClassDropdowns();
                 populateBulkClassDropdown();
@@ -1203,21 +1246,22 @@
             if (!subject)   { showToast('⚠️ Please select a subject', true); return; }
             if (!supabaseClient || !isConnected) { showToast('⚠️ Database not connected', true); return; }
 
-            const classIdInt = parseInt(classId, 10);
-            if (isNaN(classIdInt)) { showToast('❌ Invalid class selected', true); return; }
+            /* class_id may be an integer (DB) or a legacy string — handle both */
+            const classIdNum = parseInt(classId, 10);
+            const classIdValue = isNaN(classIdNum) ? classId : classIdNum;
 
             try {
                 const { data: existing } = await supabaseClient
                     .from('teacher_subject_assignments').select('*')
-                    .eq('class_id', classIdInt).eq('subject', subject).maybeSingle();
+                    .eq('class_id', classIdValue).eq('subject', subject).maybeSingle();
 
                 if (existing) {
                     await supabaseClient.from('teacher_subject_assignments')
                         .update({ teacher_id: teacherId })
-                        .eq('class_id', classIdInt).eq('subject', subject);
+                        .eq('class_id', classIdValue).eq('subject', subject);
                 } else {
                     await supabaseClient.from('teacher_subject_assignments')
-                        .insert({ teacher_id: teacherId, class_id: classIdInt, subject });
+                        .insert({ teacher_id: teacherId, class_id: classIdValue, subject });
                 }
 
                 const { data: teacher } = await supabaseClient.from('teachers').select('name').eq('id', teacherId).maybeSingle();
@@ -1975,7 +2019,7 @@
             else showToast('⚠️ Please select an Excel file first', true);
         });
 
-        /* Tab switching */
+        /* Tab switching — PATCH 4b: repopulate class dropdowns when teacher tab opens */
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1991,6 +2035,8 @@
                 if (tab === 'teacher' && currentUser && currentUser.role === 'teacher') {
                     teacherLocked.style.display = 'none';
                     teacherContent.style.display = 'block';
+                    populateClassDropdowns();
+                    populateImportClassDropdowns();
                 }
             });
         });
