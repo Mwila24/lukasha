@@ -529,7 +529,6 @@
         const SUPABASE_URL = 'https://injvpbahfqltozrsqcmc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImluanZwYmFoZnFsdG96cnNxY21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MDM0MzIsImV4cCI6MjEwMzQ3OTQzMn0.JoGibO2fqrw7sbmBbQ55EUKONQl94cqPTmkqxNoiXXk';
 
-        /* Legacy display fallback only — real list comes from DB */
         const CLASS_DEFINITIONS = [
             { id: 'Form1_Red', display: 'Form 1 Red' }, { id: 'Form1_Blue', display: 'Form 1 Blue' }, { id: 'Form1_Green', display: 'Form 1 Green' },
             { id: 'Form2_Red', display: 'Form 2 Red' }, { id: 'Form2_Blue', display: 'Form 2 Blue' }, { id: 'Form2_Green', display: 'Form 2 Green' },
@@ -692,7 +691,7 @@
             toastDiv.classList.toggle('error', isError);
             toastDiv.classList.add('show');
             clearTimeout(window.toastTimer);
-            window.toastTimer = setTimeout(() => toastDiv.classList.remove('show'), 4000);
+            window.toastTimer = setTimeout(() => toastDiv.classList.remove('show'), 4500);
         }
 
         function setConnectionStatus(status, message) {
@@ -811,7 +810,7 @@
                 teacherLocked.style.display = 'none';
                 teacherContent.style.display = 'block';
 
-                /* PATCH 4a: ensure class dropdowns are populated at login */
+                await loadClassesIntoCache();
                 populateClassDropdowns();
                 populateImportClassDropdowns();
 
@@ -827,7 +826,6 @@
         }
         window.teacherLogin = teacherLogin;
 
-        /* Pure-JS SHA-256 fallback for non-secure (HTTP) contexts */
         function sha256Fallback(ascii) {
             function rr(v, a) { return (v >>> a) | (v << (32 - a)); }
             const mp = Math.pow;
@@ -944,10 +942,9 @@
         window.adminLogin = adminLogin;
 
         /* ============================================================
-           PATCH 1: shared class-data applier + auto-seed + fallback
+           Class data helpers
            ============================================================ */
 
-        /* Single source of truth for populating CLASS_CACHE + CLASS_LIST */
         function applyClassData(data) {
             CLASS_CACHE = {};
             CLASS_LIST = [];
@@ -956,8 +953,6 @@
                 CLASS_CACHE[String(c.id)] = display;
                 CLASS_LIST.push({ id: c.id, grade: c.grade, stream: c.stream, display });
             });
-            /* FALLBACK: if the DB has no classes (empty table or RLS blocked reads),
-               fall back to the standard class list so teachers can still work. */
             if (CLASS_LIST.length === 0) {
                 CLASS_DEFINITIONS.forEach(c => {
                     CLASS_CACHE[c.id] = c.display;
@@ -966,14 +961,13 @@
             }
         }
 
-        /* Auto-seed the classes table with the standard 15 classes if it is empty */
         async function ensureClassesExist() {
             if (!supabaseClient || !isConnected) return;
             try {
                 const { count, error } = await supabaseClient
                     .from('classes').select('*', { count:'exact', head:true });
                 if (error) { console.warn('Cannot count classes:', error.message); return; }
-                if (count && count > 0) return;          /* already seeded */
+                if (count && count > 0) return;
 
                 const rows = CLASS_DEFINITIONS.map(c => {
                     const parts = c.id.split('_');
@@ -996,7 +990,7 @@
                 applyClassData(data);
             } catch (e) {
                 console.error('Error loading class cache:', e);
-                applyClassData(null);   /* ensures fallback list is loaded */
+                applyClassData(null);
             }
         }
 
@@ -1008,15 +1002,27 @@
             return legacy ? legacy.display : key;
         }
 
+        /* FIXED: prefer real DB classes over legacy fallback IDs */
         function fillClassDropdown(drop, firstOption) {
             if (!drop) return;
+            const currentValue = drop.value;
             drop.innerHTML = `<option value="">${firstOption || 'Select Class'}</option>`;
-            CLASS_LIST.forEach(c => {
+
+            const dbClasses = CLASS_LIST.filter(c => !String(c.id).includes('_'));
+            const legacyClasses = CLASS_LIST.filter(c => String(c.id).includes('_'));
+            const source = dbClasses.length > 0 ? dbClasses : legacyClasses;
+
+            source.forEach(c => {
                 const o = document.createElement('option');
                 o.value = String(c.id);
                 o.textContent = c.display;
                 drop.appendChild(o);
             });
+
+            if (currentValue) {
+                const exists = [...drop.options].some(o => o.value === currentValue);
+                if (exists) drop.value = currentValue;
+            }
         }
 
         function populateClassDropdowns() { fillClassDropdown(teacherClass, 'Select Class'); fillClassDropdown(adminStudentClass2, 'Select Class'); }
@@ -1025,7 +1031,10 @@
         function populateAnalysisClassDropdown() {
             if (!analysisClassSelect) return;
             analysisClassSelect.innerHTML = '<option value="">All Classes</option>';
-            CLASS_LIST.forEach(c => {
+            const dbClasses = CLASS_LIST.filter(c => !String(c.id).includes('_'));
+            const legacyClasses = CLASS_LIST.filter(c => String(c.id).includes('_'));
+            const source = dbClasses.length > 0 ? dbClasses : legacyClasses;
+            source.forEach(c => {
                 const o = document.createElement('option');
                 o.value = String(c.id); o.textContent = c.display;
                 analysisClassSelect.appendChild(o);
@@ -1079,7 +1088,6 @@
                         isConnected = true;
                         setConnectionStatus('online', 'Connected');
                         showToast('✅ Database connected');
-                        /* PATCH 3: seed classes if table is empty, then load everything */
                         ensureClassesExist().finally(() => loadAllData());
                     })
                     .catch(err => {
@@ -1135,7 +1143,6 @@
                 const { data, error } = await supabaseClient.from('classes').select('*').order('grade', { ascending:true });
                 if (error) throw error;
 
-                /* PATCH 2: use the shared applier (includes fallback) */
                 applyClassData(data);
 
                 populateClassDropdowns();
@@ -1246,7 +1253,6 @@
             if (!subject)   { showToast('⚠️ Please select a subject', true); return; }
             if (!supabaseClient || !isConnected) { showToast('⚠️ Database not connected', true); return; }
 
-            /* class_id may be an integer (DB) or a legacy string — handle both */
             const classIdNum = parseInt(classId, 10);
             const classIdValue = isNaN(classIdNum) ? classId : classIdNum;
 
@@ -1392,35 +1398,103 @@
             } catch (err) { showToast('❌ Error: ' + err.message, true); console.error(err); }
         });
 
+        /* ============================================================
+           FIXED: Load Students for Teacher — matches students.class
+           regardless of whether it stores an integer id or a display name
+           ============================================================ */
         loadStudentsBtn.addEventListener('click', async function() {
-            if (!currentUser || currentUser.role !== 'teacher') { showToast('🔒 Teacher login required', true); return; }
+            if (!currentUser || currentUser.role !== 'teacher') {
+                showToast('🔒 Teacher login required', true);
+                return;
+            }
 
-            const className = teacherClass.value;
-            const subject   = teacherSubject.value;
-            const term      = teacherTerm.value;
-            const year      = teacherYear.value;
-            const testType  = teacherTestType.value;
+            const classIdValue = teacherClass.value;
+            const subject      = teacherSubject.value;
+            const term         = teacherTerm.value;
+            const year         = teacherYear.value;
+            const testType     = teacherTestType.value;
 
-            if (!className || !subject || !term || !year || !testType) { showToast('⚠️ Please select all fields', true); return; }
-            if (!supabaseClient || !isConnected) { showToast('⚠️ Database not connected', true); return; }
+            if (!classIdValue || !subject || !term || !year || !testType) {
+                showToast('⚠️ Please select all fields', true);
+                return;
+            }
+            if (!supabaseClient || !isConnected) {
+                showToast('⚠️ Database not connected', true);
+                return;
+            }
+
+            /* Build every value students.class might hold for this class */
+            let classKey = String(classIdValue);
+            let legacyDisplay = null;
+            let legacyId = null;
+
+            if (/[A-Za-z]/.test(classKey) && classKey.includes('_')) {
+                const match = CLASS_DEFINITIONS.find(c => c.id === classKey);
+                if (match) {
+                    legacyDisplay = match.display;
+                    const dbMatch = CLASS_LIST.find(c => c.display === match.display);
+                    legacyId = dbMatch ? dbMatch.id : null;
+                }
+            } else {
+                legacyDisplay = CLASS_CACHE[classKey] || null;
+                legacyId = classKey;
+            }
+
+            const candidates = new Set();
+            candidates.add(String(classIdValue));
+            if (legacyDisplay) candidates.add(String(legacyDisplay));
+            if (legacyId != null) candidates.add(String(legacyId));
+            const candidateList = [...candidates].filter(Boolean);
+
+            console.log('🔍 Loading students for class candidates:', candidateList);
 
             try {
                 showToast('🔄 Loading students...');
+
                 const { data: students, error } = await supabaseClient
-                    .from('students').select('id, name, student_number').eq('class', String(className)).order('name');
+                    .from('students')
+                    .select('id, name, student_number, class')
+                    .in('class', candidateList)
+                    .order('name');
+
                 if (error) throw error;
 
                 if (!students || students.length === 0) {
-                    showToast('⚠️ No students found in this class.', true);
+                    /* Diagnostic: show which class values DO exist */
+                    const { data: sample } = await supabaseClient
+                        .from('students')
+                        .select('class')
+                        .limit(50);
+
+                    const foundClasses = [...new Set((sample || []).map(s => s.class))].filter(Boolean);
+                    const prettyClasses = foundClasses.map(c => `"${c}" → ${getClassDisplay(c)}`).join(' | ');
+
+                    console.warn('❌ No students for candidates:', candidateList);
+                    console.warn('📋 Classes that DO have students:', foundClasses);
+
+                    showToast(
+                        `⚠️ No students found for "${getClassDisplay(classIdValue)}". ` +
+                        (prettyClasses ? `Existing classes: ${prettyClasses}` : 'No students registered yet.'),
+                        true
+                    );
+
                     resultsTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--ink-faint);">No students in this class.</td></tr>`;
                     resultsEntry.style.display = 'block';
                     return;
                 }
 
+                console.log(`✅ Found ${students.length} students`);
+
                 const studentIds = students.map(s => s.id);
                 const { data: results, error: rError } = await supabaseClient
-                    .from('results').select('student_id, score, comment')
-                    .in('student_id', studentIds).eq('subject', subject).eq('term', term).eq('year', year).eq('test_type', testType);
+                    .from('results')
+                    .select('student_id, score, comment')
+                    .in('student_id', studentIds)
+                    .eq('subject', subject)
+                    .eq('term', term)
+                    .eq('year', year)
+                    .eq('test_type', testType);
+
                 if (rError) console.warn('Could not fetch existing results:', rError);
 
                 const resultsMap = {};
@@ -1429,7 +1503,10 @@
                 displayResultsEntryWithScores(students, subject, term, year, testType, resultsMap);
                 resultsEntry.style.display = 'block';
                 showToast(`✅ ${students.length} students loaded, ${results ? results.length : 0} existing scores`);
-            } catch (err) { showToast('❌ Error: ' + err.message, true); console.error(err); }
+            } catch (err) {
+                showToast('❌ Error: ' + err.message, true);
+                console.error(err);
+            }
         });
 
         function displayResultsEntryWithScores(students, subject, term, year, testType, resultsMap) {
@@ -1552,8 +1629,17 @@
 
             try {
                 showToast('🔄 Generating analysis...');
+
+                /* Build candidate list for class filter (integer id or display name) */
+                let candidates = null;
+                if (classId) {
+                    const display = getClassDisplay(classId);
+                    candidates = [String(classId)];
+                    if (display && display !== 'N/A') candidates.push(String(display));
+                }
+
                 let sQ = supabaseClient.from('students').select('id, name, student_number, class');
-                if (classId) sQ = sQ.eq('class', String(classId));
+                if (classId) sQ = sQ.in('class', candidates);
                 const { data: students, error: sErr } = await sQ;
                 if (sErr) throw sErr;
 
@@ -1966,8 +2052,14 @@
 
             try {
                 showToast('🔄 Importing results...');
+
+                /* Same candidate matching as Load Students */
+                const display = getClassDisplay(className);
+                const candidates = [String(className)];
+                if (display && display !== 'N/A') candidates.push(String(display));
+
                 const { data: students } = await supabaseClient.from('students')
-                    .select('id, student_number').eq('class', String(className));
+                    .select('id, student_number').in('class', candidates);
                 if (!students || students.length === 0) { showToast('⚠️ No students found in this class', true); return; }
 
                 const studentMap = {};
@@ -2019,7 +2111,7 @@
             else showToast('⚠️ Please select an Excel file first', true);
         });
 
-        /* Tab switching — PATCH 4b: repopulate class dropdowns when teacher tab opens */
+        /* Tab switching */
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
